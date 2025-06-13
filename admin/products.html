@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Size.eg</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">SIZE.EG</div>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="orders.html">Orders</a></li>
+                    <li class="active"><a href="products.html">Products</a></li>
+                    <li><a href="../index.html" target="_blank">View Site</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="admin-main-content">
+            <header class="admin-header">
+                <h1>Manage Products</h1>
+                <button class="cta-button admin-cta" id="add-product-btn">Add New Product</button>
+            </header>
+            <section class="admin-section">
+                <h2>All Products</h2>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Images</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">Add Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Price (EGP)</label>
+                    <input type="number" id="product-price" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Category</label>
+                    <select id="product-category" required>
+                        <option value="t-shirt">T-Shirt</option>
+                        <option value="shorts">Shorts</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-image-front">Front Image</label>
+                    <input type="file" id="product-image-front" accept="image/*">
+                    <img id="image-preview-front" src="" alt="Front Preview" style="max-width: 100px; margin-top: 10px; display: none;">
+                </div>
+                <div class="form-group">
+                    <label for="product-image-back">Back Image</label>
+                    <input type="file" id="product-image-back" accept="image/*">
+                    <img id="image-preview-back" src="" alt="Back Preview" style="max-width: 100px; margin-top: 10px; display: none;">
+                </div>
+                <button type="submit" class="cta-button">Save Product</button>
+            </form>
+        </div>
+        </main>
+    </div>
+</body>
+</html>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const products = [];
+
+    const productsTable = document.getElementById('products-table').getElementsByTagName('tbody')[0];
+    const modal = document.getElementById('product-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const closeBtn = document.querySelector('.close-btn');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const productForm = document.getElementById('product-form');
+    const productIdInput = document.getElementById('product-id');
+    const productNameInput = document.getElementById('product-name');
+    const productPriceInput = document.getElementById('product-price');
+    const productCategoryInput = document.getElementById('product-category');
+    const productImageFrontInput = document.getElementById('product-image-front');
+    const productImageBackInput = document.getElementById('product-image-back');
+    const imagePreviewFront = document.getElementById('image-preview-front');
+    const imagePreviewBack = document.getElementById('image-preview-back');
+
+    function renderProducts() {
+        productsTable.innerHTML = '';
+        products.forEach(product => {
+            const row = productsTable.insertRow();
+            row.innerHTML = `
+                <td>
+                    <div class="product-images">
+                        <img src="${product.imageFront || product.image}" alt="${product.name} Front" class="table-img" title="Front">
+                        ${product.imageBack ? `<img src="${product.imageBack}" alt="${product.name} Back" class="table-img" title="Back">` : ''}
+                    </div>
+                </td>
+                <td>${product.name}</td>
+                <td>EGP ${product.price}</td>
+                <td>${product.category}</td>
+                <td class="actions-cell">
+                    <a href="#" class="edit-btn" data-id="${product.id}">Edit</a>
+                    <a href="#" class="delete-btn" data-id="${product.id}">Delete</a>
+                </td>
+            `;
+        });
+    }
+
+    function openModal(title, product = null) {
+        modalTitle.textContent = title;
+        if (product) {
+            productIdInput.value = product.id;
+            productNameInput.value = product.name;
+            productPriceInput.value = product.price;
+            productCategoryInput.value = product.category;
+
+            // Handle front image (backward compatibility)
+            if (product.imageFront || product.image) {
+                imagePreviewFront.src = product.imageFront || product.image;
+                imagePreviewFront.style.display = 'block';
+            }
+
+            // Handle back image
+            if (product.imageBack) {
+                imagePreviewBack.src = product.imageBack;
+                imagePreviewBack.style.display = 'block';
+            }
+        } else {
+            productForm.reset();
+            productIdInput.value = '';
+            imagePreviewFront.style.display = 'none';
+            imagePreviewBack.style.display = 'none';
+        }
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    addProductBtn.addEventListener('click', () => openModal('Add Product'));
+    closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            closeModal();
+        }
+    });
+
+    // Front image upload
+    productImageFrontInput.addEventListener('change', () => {
+        const file = productImageFrontInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreviewFront.src = e.target.result;
+                imagePreviewFront.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Back image upload
+    productImageBackInput.addEventListener('change', () => {
+        const file = productImageBackInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreviewBack.src = e.target.result;
+                imagePreviewBack.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = productIdInput.value;
+        const newProduct = {
+            id: id ? parseInt(id) : Date.now(),
+            name: productNameInput.value,
+            price: parseInt(productPriceInput.value),
+            category: productCategoryInput.value,
+            imageFront: imagePreviewFront.src,
+            imageBack: imagePreviewBack.src || null,
+            // Keep backward compatibility
+            image: imagePreviewFront.src
+        };
+
+        if (id) {
+            const index = products.findIndex(p => p.id == id);
+            products[index] = newProduct;
+        } else {
+            products.push(newProduct);
+        }
+
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts();
+        closeModal();
+    });
+
+    productsTable.addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-btn')) {
+            const id = e.target.dataset.id;
+            const product = products.find(p => p.id == id);
+            openModal('Edit Product', product);
+        }
+
+        if (e.target.classList.contains('delete-btn')) {
+            const id = e.target.dataset.id;
+            const index = products.findIndex(p => p.id == id);
+            products.splice(index, 1);
+            localStorage.setItem('products', JSON.stringify(products));
+            renderProducts();
+        }
+    });
+
+    // Load products from local storage if available
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+        products.length = 0;
+        Array.prototype.push.apply(products, JSON.parse(storedProducts));
+    }
+
+    renderProducts();
+});
+</script>
+</body>
+</html>
