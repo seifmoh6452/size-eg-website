@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - Size.eg</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Size.eg</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Our Products</a></li>
+                <li><a href="offers.html">Offers</a></li>
+            </ul>
+            <div class="cart-icon">
+                <a href="checkout.html">🛒</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="product-detail">
+            <div class="product-detail-layout">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="" alt="Product Image" id="mainProductImage">
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1 id="productName"></h1>
+                    <p class="price" id="productPrice"></p>
+                    <p class="description" id="productDescription"></p>
+                    <div class="size-selection">
+                        <label for="size">Size:</label>
+                        <select name="size" id="size">
+                            <option value="s">S</option>
+                            <option value="m">M</option>
+                            <option value="l">L</option>
+                            <option value="xl">XL</option>
+                        </select>
+                    </div>
+                    <button class="cta-button add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Size.eg. All rights reserved.</p>
+    </footer>
+
+    <script src="product-detail.js"></script>
+</body>
+</html>

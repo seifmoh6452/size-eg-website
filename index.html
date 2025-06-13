@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Size.eg - Modern Egyptian Streetwear Collection</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<header class="modern-nav-2025">
+    <nav class="nav-container">
+        <!-- Logo Section -->
+        <div class="nav-brand">
+            <a href="index.html" class="brand-logo">
+                <span class="logo-text">SIZE</span>
+                <span class="logo-accent">.EG</span>
+            </a>
+        </div>
+
+        <!-- Main Navigation -->
+        <div class="nav-menu" id="nav-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">
+                        <span class="link-text">Collection</span>
+                        <span class="link-underline"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Action Items -->
+        <div class="nav-actions">
+            <button class="search-toggle" id="search-toggle">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="cart.html" class="cart-button">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </a>
+            <button class="mobile-toggle" id="mobile-toggle">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="search-overlay">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search products...">
+                <button class="search-close" id="search-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Modern Products Page 2025 -->
+<main class="products-main-2025">
+    <!-- Hero Section with Parallax Effect -->
+    <section class="products-hero-2025">
+        <div class="hero-background-overlay"></div>
+        <div class="hero-content-wrapper">
+            <div class="hero-text-content">
+                <span class="hero-subtitle">Premium Collection</span>
+                <h1 class="hero-title">Egyptian Streetwear</h1>
+                <p class="hero-description">Discover our curated collection of modern Egyptian streetwear. Each piece tells a story of heritage, innovation, and bold style.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-products">24</span>
+                        <span class="stat-label">Products</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">Categories</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Egyptian</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Advanced Filter & Search Section -->
+    <section class="products-controls-2025">
+        <div class="controls-container">
+            <!-- Search Bar -->
+            <div class="advanced-search">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="product-search-2025" placeholder="Search for products, categories, or styles..." class="search-input-2025">
+                    <button class="search-clear" id="search-clear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs-2025">
+                <button class="filter-tab-2025 active" data-filter="all">
+                    <span class="tab-icon"><i class="fas fa-th"></i></span>
+                    <span class="tab-text">All Products</span>
+                    <span class="tab-count" id="count-all">0</span>
+                </button>
+                <button class="filter-tab-2025" data-filter="t-shirt">
+                    <span class="tab-icon"><i class="fas fa-tshirt"></i></span>
+                    <span class="tab-text">T-Shirts</span>
+                    <span class="tab-count" id="count-tshirt">0</span>
+                </button>
+                <button class="filter-tab-2025" data-filter="shorts">
+                    <span class="tab-icon"><i class="fas fa-cut"></i></span>
+                    <span class="tab-text">Shorts</span>
+                    <span class="tab-count" id="count-shorts">0</span>
+                </button>
+
+            </div>
+
+            <!-- Sort & View Options -->
+            <div class="controls-right">
+                <div class="sort-dropdown-2025">
+                    <select id="sort-products-2025" class="sort-select-2025">
+                        <option value="default">Featured</option>
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name A-Z</option>
+                    </select>
+                    <i class="fas fa-chevron-down sort-arrow"></i>
+                </div>
+
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="results-summary">
+            <div class="results-info">
+                <span class="results-count">Showing <strong id="visible-count">0</strong> of <strong id="total-count">0</strong> products</span>
+                <span class="active-filters" id="active-filters"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-showcase-2025">
+        <div class="products-container">
+            <div class="product-grid-2025" id="product-grid-2025">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+
+            <!-- Load More Section -->
+            <div class="load-more-section">
+                <button class="load-more-btn-2025" id="load-more-2025">
+                    <span class="btn-text">Load More Products</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-down"></i></span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modern Footer 2025 -->
+<footer class="footer-2025">
+    <div class="footer-container">
+        <div class="footer-content-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <span class="logo-text">SIZE</span>
+                    <span class="logo-accent">.EG</span>
+                </div>
+                <p class="footer-tagline">Modern Egyptian streetwear for the bold and authentic.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Collection</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-section">
+                <h4>Customer Care</h4>
+                <ul>
+                    <li><a href="#">Size Guide</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>Stay Updated</h4>
+                <p>Get the latest drops and exclusive offers.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" class="newsletter-input">
+                    <button class="newsletter-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2025 Size.eg. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="script.js"></script>
+    <script src="products-2025.js"></script>
+</body>
+</html>
