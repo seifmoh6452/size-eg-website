@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1,
+    "name": "Egyptian Heritage T-Shirt",
+    "price": 299,
+    "category": "t-shirts",
+    "imageFront": "https://via.placeholder.com/400x400/8B4513/FFFFFF?text=Egyptian+Heritage+Front",
+    "imageBack": "https://via.placeholder.com/400x400/8B4513/FFFFFF?text=Egyptian+Heritage+Back",
+    "description": "Premium cotton t-shirt featuring traditional Egyptian motifs",
+    "badge": "new"
+  },
+  {
+    "id": 2,
+    "name": "Cairo Streetwear Tee",
+    "price": 249,
+    "originalPrice": 299,
+    "category": "t-shirts",
+    "imageFront": "https://via.placeholder.com/400x400/CD853F/FFFFFF?text=Cairo+Street+Front",
+    "imageBack": "https://via.placeholder.com/400x400/CD853F/FFFFFF?text=Cairo+Street+Back",
+    "description": "Modern streetwear inspired by Cairo's urban culture",
+    "badge": "sale"
+  },
+  {
+    "id": 3,
+    "name": "Pharaoh's Legacy Shirt",
+    "price": 349,
+    "category": "t-shirts",
+    "imageFront": "https://via.placeholder.com/400x400/DAA520/FFFFFF?text=Pharaoh+Legacy+Front",
+    "imageBack": "https://via.placeholder.com/400x400/DAA520/FFFFFF?text=Pharaoh+Legacy+Back",
+    "description": "Luxury t-shirt with golden pharaoh design"
+  },
+  {
+    "id": 4,
+    "name": "Nile River Graphic Tee",
+    "price": 199,
+    "category": "t-shirts",
+    "imageFront": "https://via.placeholder.com/400x400/4682B4/FFFFFF?text=Nile+River+Front",
+    "imageBack": "https://via.placeholder.com/400x400/4682B4/FFFFFF?text=Nile+River+Back",
+    "description": "Cool blue t-shirt featuring Nile River graphics"
+  },
+  {
+    "id": 5,
+    "name": "Desert Sand Hoodie",
+    "price": 449,
+    "category": "hoodies",
+    "imageFront": "https://via.placeholder.com/400x400/F4A460/FFFFFF?text=Desert+Sand+Front",
+    "imageBack": "https://via.placeholder.com/400x400/F4A460/FFFFFF?text=Desert+Sand+Back",
+    "description": "Warm hoodie in desert sand color with Egyptian patterns"
+  },
+  {
+    "id": 6,
+    "name": "Alexandria Vintage Tee",
+    "price": 279,
+    "category": "t-shirts",
+    "imageFront": "https://via.placeholder.com/400x400/708090/FFFFFF?text=Alexandria+Front",
+    "imageBack": "https://via.placeholder.com/400x400/708090/FFFFFF?text=Alexandria+Back",
+    "description": "Vintage-style t-shirt celebrating Alexandria's history"
+  }
+]
