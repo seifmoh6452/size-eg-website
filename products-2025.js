@@ -36,19 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let visibleProducts = 6;
     let filteredProducts = [...products];
 
-    // Load products from localStorage (admin panel)
-    function loadProducts() {
+    // Load products using Easy Sync (automatic cross-device sync)
+    async function loadProducts() {
         try {
-            const storedProducts = localStorage.getItem('products');
-            if (storedProducts) {
-                products = JSON.parse(storedProducts);
-                console.log('Loaded products from admin:', products.length);
+            if (window.easySync) {
+                products = await window.easySync.loadProducts();
+                console.log('✅ Products loaded with Easy Sync:', products.length);
             } else {
-                products = [];
-                showEmptyState();
+                // Fallback to localStorage if Easy Sync not available
+                const storedProducts = localStorage.getItem('products');
+                if (storedProducts) {
+                    products = JSON.parse(storedProducts);
+                    console.log('📱 Products loaded from localStorage:', products.length);
+                } else {
+                    products = [];
+                    showEmptyState();
+                }
             }
         } catch (error) {
-            console.log('Error loading products from localStorage:', error);
+            console.log('Error loading products:', error);
             products = [];
             showEmptyState();
         }
@@ -137,13 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize page
-    function init() {
+    async function init() {
         console.log('Initializing products page...');
 
         // Check elements first
         checkElements();
 
-        loadProducts();
+        await loadProducts(); // Wait for products to load
         loadCartCount(); // Load cart count on page load
         updateProductCounts();
         filterProducts(); // Apply filters first

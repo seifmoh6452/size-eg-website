@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             products.push(newProduct);
         }
 
-        localStorage.setItem('products', JSON.stringify(products));
+        saveProducts();
         renderProducts();
         closeModal();
     });
@@ -228,19 +228,79 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = e.target.dataset.id;
             const index = products.findIndex(p => p.id == id);
             products.splice(index, 1);
-            localStorage.setItem('products', JSON.stringify(products));
+            saveProducts();
             renderProducts();
         }
     });
 
-    // Load products from local storage if available
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-        products.length = 0;
-        Array.prototype.push.apply(products, JSON.parse(storedProducts));
+    // Load products from GitHub repository
+    async function loadProductsFromGitHub() {
+        try {
+            const response = await fetch('https://raw.githubusercontent.com/seifmoh6452/size-eg-website/main/products.json');
+            if (response.ok) {
+                const githubProducts = await response.json();
+                products.length = 0;
+                Array.prototype.push.apply(products, githubProducts);
+                renderProducts();
+                console.log('Products loaded from GitHub:', products.length);
+            } else {
+                console.log('No products.json found on GitHub, using local storage fallback');
+                loadProductsFromLocalStorage();
+            }
+        } catch (error) {
+            console.error('Error loading from GitHub:', error);
+            loadProductsFromLocalStorage();
+        }
     }
 
-    renderProducts();
+    // Fallback to local storage
+    function loadProductsFromLocalStorage() {
+        const storedProducts = localStorage.getItem('products');
+        if (storedProducts) {
+            products.length = 0;
+            Array.prototype.push.apply(products, JSON.parse(storedProducts));
+            renderProducts();
+            console.log('Products loaded from localStorage:', products.length);
+        }
+    }
+
+    // Save products to both localStorage and show GitHub instructions
+    function saveProducts() {
+        // Save to localStorage as backup
+        localStorage.setItem('products', JSON.stringify(products));
+
+        // Show instructions to update GitHub
+        showGitHubUpdateInstructions();
+    }
+
+    // Show instructions for updating GitHub
+    function showGitHubUpdateInstructions() {
+        const instructions = `
+        📋 TO SYNC ACROSS ALL DEVICES:
+
+        1. Copy this JSON data:
+        ${JSON.stringify(products, null, 2)}
+
+        2. Go to your GitHub repository:
+           https://github.com/seifmoh6452/size-eg-website
+
+        3. Create/update file: products.json
+
+        4. Paste the JSON data and commit
+
+        5. Products will sync across all devices!
+        `;
+
+        console.log(instructions);
+
+        // Show modal with instructions
+        if (confirm('Products saved locally! Click OK to see sync instructions in console, or Cancel to continue.')) {
+            alert('Check the browser console (F12) for GitHub sync instructions.');
+        }
+    }
+
+    // Initialize - try to load from GitHub first
+    loadProductsFromGitHub();
 });
 </script>
 </body>
