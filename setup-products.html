@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Products - Size.eg</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .step {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .step:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .step h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .file-input {
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .file-input input {
+            margin: 10px 0;
+        }
+        .final-step {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #e9ecef;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+    <script src="js/products-manager.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Setup Products for Size.eg</h1>
+        
+        <div class="step">
+            <h3><span class="step-number">1</span>Create Images Folder</h3>
+            <p>Create this folder structure in your website directory:</p>
+            <div class="code-block">
+Size.eg/
+├── images/
+│   └── products/
+│       ├── your-product-1.jpg
+│       ├── your-product-2.jpg
+│       └── ...
+            </div>
+            <p><strong>Copy your images from:</strong><br>
+            <span class="highlight">C:\Users\HP\Downloads\Size.eg prodcuts</span><br>
+            <strong>To:</strong><br>
+            <span class="highlight">Size.eg/images/products/</span></p>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">2</span>Upload Product Images</h3>
+            <p>Upload your product images to automatically create products:</p>
+            <div class="file-input">
+                <input type="file" id="image-upload" multiple accept="image/*">
+                <p>Select multiple images from your products folder</p>
+            </div>
+            <button class="button" onclick="processImages()">📸 Process Images</button>
+            <div id="image-status"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">3</span>Import Existing Products</h3>
+            <p>If you have a products.json file, import it:</p>
+            <div class="file-input">
+                <input type="file" id="json-upload" accept=".json">
+                <p>Select your products.json file</p>
+            </div>
+            <button class="button" onclick="importProducts()">📦 Import Products</button>
+            <div id="import-status"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">4</span>Test Products</h3>
+            <p>Test if your products are loading correctly:</p>
+            <button class="button" onclick="testProducts()" id="test-btn">🔗 Test Products</button>
+            <div id="test-status"></div>
+            <div id="products-list"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">5</span>Download Setup Files</h3>
+            <p>Download your products file to keep as backup:</p>
+            <button class="button" onclick="downloadProducts()">💾 Download products.json</button>
+            <div id="download-status"></div>
+        </div>
+
+        <div class="final-step" id="final-step" style="display: none;">
+            <h2>🎉 Setup Complete!</h2>
+            <p>Your products are now ready! You can:</p>
+            <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+                <li>✅ Manage products in admin panel</li>
+                <li>✅ Edit prices in products.json</li>
+                <li>✅ Track income and orders</li>
+                <li>✅ Add new products easily</li>
+            </ul>
+            <button class="button" onclick="window.location.href='admin/products.html'" style="background: white; color: #28a745; margin-top: 15px;">
+                🛠️ Go to Admin Panel
+            </button>
+        </div>
+    </div>
+
+    <script>
+        async function processImages() {
+            const input = document.getElementById('image-upload');
+            const status = document.getElementById('image-status');
+            
+            if (!input.files.length) {
+                status.innerHTML = '<div class="error">❌ Please select some images first</div>';
+                return;
+            }
+            
+            const products = [];
+            
+            for (let file of input.files) {
+                if (file.type.startsWith('image/')) {
+                    const product = window.productsManager.createProductFromImage(file.name);
+                    products.push(product);
+                }
+            }
+            
+            // Add products to manager
+            products.forEach(product => {
+                window.productsManager.addProduct(product);
+            });
+            
+            status.innerHTML = `<div class="success">✅ Created ${products.length} products from images!</div>`;
+            
+            // Show products list
+            const productsList = products.map(p => `<li>${p.name} - EGP ${p.price}</li>`).join('');
+            status.innerHTML += `<div class="info"><strong>Products created:</strong><ul>${productsList}</ul></div>`;
+            
+            document.getElementById('final-step').style.display = 'block';
+        }
+
+        async function importProducts() {
+            const input = document.getElementById('json-upload');
+            const status = document.getElementById('import-status');
+            
+            if (!input.files.length) {
+                status.innerHTML = '<div class="error">❌ Please select a JSON file first</div>';
+                return;
+            }
+            
+            const file = input.files[0];
+            const success = await window.productsManager.importProductsFromFile(file);
+            
+            if (success) {
+                const products = window.productsManager.getAllProducts();
+                status.innerHTML = `<div class="success">✅ Imported ${products.length} products successfully!</div>`;
+                document.getElementById('final-step').style.display = 'block';
+            } else {
+                status.innerHTML = '<div class="error">❌ Failed to import products. Check file format.</div>';
+            }
+        }
+
+        async function testProducts() {
+            const btn = document.getElementById('test-btn');
+            const status = document.getElementById('test-status');
+            const productsList = document.getElementById('products-list');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing...';
+            
+            try {
+                await window.productsManager.loadProducts();
+                const products = window.productsManager.getAllProducts();
+                
+                if (products.length > 0) {
+                    status.innerHTML = `<div class="success">✅ Found ${products.length} products!</div>`;
+                    
+                    const list = products.map(p => 
+                        `<div style="padding: 10px; border: 1px solid #ddd; margin: 5px 0; border-radius: 5px;">
+                            <strong>${p.name}</strong> - EGP ${p.price}<br>
+                            <small>Category: ${p.category} | Stock: ${p.stock}</small>
+                        </div>`
+                    ).join('');
+                    
+                    productsList.innerHTML = `<div class="info"><strong>Your Products:</strong><br>${list}</div>`;
+                    document.getElementById('final-step').style.display = 'block';
+                } else {
+                    status.innerHTML = '<div class="info">ℹ️ No products found. Upload images or import JSON file first.</div>';
+                }
+            } catch (error) {
+                status.innerHTML = `<div class="error">❌ Error loading products: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔗 Test Products';
+            }
+        }
+
+        function downloadProducts() {
+            const status = document.getElementById('download-status');
+            
+            try {
+                window.productsManager.downloadProductsJSON();
+                status.innerHTML = '<div class="success">✅ Products file downloaded!</div>';
+            } catch (error) {
+                status.innerHTML = `<div class="error">❌ Error downloading: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await window.productsManager.loadProducts();
+            const products = window.productsManager.getAllProducts();
+            
+            if (products.length > 0) {
+                document.getElementById('test-status').innerHTML = 
+                    `<div class="info">ℹ️ Found ${products.length} existing products</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -40,11 +40,126 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="orders-tbody">
                     </tbody>
                 </table>
             </section>
         </main>
     </div>
+
+    <script src="../js/products-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadAndDisplayOrders();
+        });
+
+        async function loadAndDisplayOrders() {
+            try {
+                // Load orders from localStorage
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                console.log('Loaded orders:', orders.length);
+
+                const tbody = document.getElementById('orders-tbody');
+                if (!tbody) return;
+
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #666;">No orders found. Orders will appear here when customers place them.</td></tr>';
+                    return;
+                }
+
+                // Display orders (newest first)
+                tbody.innerHTML = orders.reverse().map(order => {
+                    const customer = order.customer || {};
+                    const shipping = order.shipping || {};
+                    const total = order.totals ? order.totals.total : order.total || 0;
+                    const orderDate = new Date(order.orderDate || order.date);
+
+                    return `
+                        <tr>
+                            <td><strong>${order.orderId || order.id}</strong><br>
+                                <small>${orderDate.toLocaleDateString('en-GB')} ${orderDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})}</small>
+                            </td>
+                            <td>${customer.firstName || ''} ${customer.lastName || ''}<br>
+                                <small>${customer.email || ''}</small>
+                            </td>
+                            <td>${customer.phone || 'N/A'}</td>
+                            <td>${shipping.address || 'N/A'}<br>
+                                <small>${shipping.city || ''}, ${shipping.governorate || ''}</small>
+                            </td>
+                            <td><strong>EGP ${total.toFixed ? total.toFixed(0) : total}</strong><br>
+                                <small>${order.items ? order.items.length : 0} item${order.items && order.items.length !== 1 ? 's' : ''}</small>
+                            </td>
+                            <td><span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Pending</span></td>
+                            <td>
+                                <button onclick="viewOrderDetails('${order.orderId || order.id}')" style="background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('orders-tbody').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading orders</td></tr>';
+            }
+        }
+
+        function viewOrderDetails(orderId) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const order = orders.find(o => (o.orderId || o.id) === orderId);
+
+            if (!order) {
+                alert('Order not found');
+                return;
+            }
+
+            // Create a detailed view of the order
+            let details = `ORDER DETAILS:\n\n`;
+            details += `Order ID: ${order.orderId || order.id}\n`;
+            details += `Date: ${new Date(order.orderDate || order.date).toLocaleString()}\n\n`;
+
+            if (order.customer) {
+                details += `CUSTOMER:\n`;
+                details += `Name: ${order.customer.firstName || ''} ${order.customer.lastName || ''}\n`;
+                details += `Email: ${order.customer.email || 'N/A'}\n`;
+                details += `Phone: ${order.customer.phone || 'N/A'}\n\n`;
+            }
+
+            if (order.shipping) {
+                details += `SHIPPING ADDRESS:\n`;
+                details += `${order.shipping.address || 'N/A'}\n`;
+                details += `${order.shipping.city || ''}, ${order.shipping.governorate || ''}\n`;
+                details += `Postal Code: ${order.shipping.postalCode || 'N/A'}\n\n`;
+            }
+
+            if (order.items && order.items.length > 0) {
+                details += `ITEMS:\n`;
+                order.items.forEach((item, index) => {
+                    details += `${index + 1}. ${item.name}\n`;
+                    details += `   Category: ${item.category}\n`;
+                    details += `   Price: EGP ${item.price}\n`;
+                    details += `   Quantity: ${item.quantity}\n`;
+                    details += `   Subtotal: EGP ${(item.price * item.quantity).toFixed(0)}\n\n`;
+                });
+            }
+
+            if (order.totals) {
+                details += `ORDER SUMMARY:\n`;
+                details += `Subtotal: EGP ${order.totals.subtotal ? order.totals.subtotal.toFixed(0) : '0'}\n`;
+                details += `Delivery: EGP ${order.totals.shipping ? order.totals.shipping.toFixed(0) : '50'}\n`;
+                details += `Donation (5%): EGP ${order.totals.donation ? order.totals.donation.toFixed(0) : '0'}\n`;
+                details += `TOTAL: EGP ${order.totals.total ? order.totals.total.toFixed(0) : '0'}\n\n`;
+            }
+
+            if (order.orderNotes) {
+                details += `NOTES:\n${order.orderNotes}\n\n`;
+            }
+
+            details += `Payment Method: Cash on Delivery`;
+
+            alert(details);
+        }
+    </script>
 </body>
 </html>

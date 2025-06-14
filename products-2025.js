@@ -36,31 +36,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let visibleProducts = 6;
     let filteredProducts = [...products];
 
-    // Load products from Supabase
+    // Load products from JSON/localStorage
     async function loadProducts() {
         try {
-            // Check if database service is available
-            if (!window.dbService) {
-                console.log('Database service not available, falling back to localStorage');
+            // Check if products manager is available
+            if (!window.productsManager) {
+                console.log('Products manager not available, falling back to localStorage');
                 loadProductsFromLocalStorage();
                 return;
             }
 
-            const supabaseProducts = await window.dbService.getAllProducts();
-            if (supabaseProducts && supabaseProducts.length > 0) {
-                products = supabaseProducts.map(p => window.dbService.convertSupabaseProduct(p));
-                console.log('Loaded products from Supabase:', products.length);
-            } else {
-                products = [];
+            products = await window.productsManager.loadProducts();
+            console.log('Loaded products:', products.length);
+
+            if (products.length === 0) {
                 showEmptyState();
             }
         } catch (error) {
-            console.log('Error loading products from Supabase, falling back to localStorage:', error);
+            console.log('Error loading products, falling back to localStorage:', error);
             loadProductsFromLocalStorage();
         }
     }
 
-    // Fallback: Load products from localStorage (admin panel)
+    // Fallback: Load products from localStorage
     function loadProductsFromLocalStorage() {
         try {
             const storedProducts = localStorage.getItem('products');
@@ -93,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Refresh products from database
+    // Refresh products
     async function refreshProducts() {
         await loadProducts();
         updateProductCounts();
@@ -711,4 +709,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the page
     init();
+
+    // Mobile optimizations
+    if (window.innerWidth <= 768) {
+        // Optimize for mobile
+        document.body.classList.add('mobile-device');
+
+        // Improve touch scrolling
+        document.body.style.webkitOverflowScrolling = 'touch';
+
+        // Prevent zoom on input focus
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                if (window.innerWidth <= 768) {
+                    document.querySelector('meta[name=viewport]').setAttribute('content',
+                        'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                }
+            });
+
+            input.addEventListener('blur', () => {
+                if (window.innerWidth <= 768) {
+                    document.querySelector('meta[name=viewport]').setAttribute('content',
+                        'width=device-width, initial-scale=1.0');
+                }
+            });
+        });
+
+        // Optimize image loading for mobile
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.loading = 'lazy';
+        });
+    }
 });

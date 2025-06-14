@@ -605,4 +605,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize checkout
     loadCart();
+
+    // Mobile optimizations for checkout
+    if (window.innerWidth <= 768) {
+        // Add mobile class
+        document.body.classList.add('mobile-checkout');
+
+        // Improve form experience on mobile
+        const formInputs = document.querySelectorAll('.form-input');
+        formInputs.forEach(input => {
+            // Prevent zoom on focus
+            input.addEventListener('focus', () => {
+                input.style.fontSize = '16px';
+            });
+
+            // Add better touch targets
+            input.style.minHeight = '44px';
+            input.style.padding = '12px';
+        });
+
+        // Optimize checkout button for mobile
+        const checkoutBtn = document.querySelector('.place-order-btn');
+        if (checkoutBtn) {
+            checkoutBtn.style.width = '100%';
+            checkoutBtn.style.padding = '16px';
+            checkoutBtn.style.fontSize = '18px';
+            checkoutBtn.style.minHeight = '56px';
+        }
+
+        // Smooth scroll to form errors
+        window.scrollToError = function(element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        };
+    }
 });

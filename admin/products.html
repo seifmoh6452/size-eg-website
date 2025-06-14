@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="admin-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body class="admin-body">
     <div class="admin-layout">
@@ -86,7 +84,7 @@
     </div>
 </body>
 </html>
-<script src="../js/database.js"></script>
+<script src="../js/products-manager.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     let products = [];
@@ -107,16 +105,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const imagePreviewFront = document.getElementById('image-preview-front');
     const imagePreviewBack = document.getElementById('image-preview-back');
 
-    // Load products from Supabase
+    // Load products from JSON/localStorage
     async function loadProducts() {
         try {
             isLoading = true;
             showLoadingState();
 
-            const supabaseProducts = await window.dbService.getAllProducts();
-            products = supabaseProducts.map(p => window.dbService.convertSupabaseProduct(p));
-
-            console.log('Loaded products from Supabase:', products.length);
+            products = await window.productsManager.loadProducts();
+            console.log('Loaded products:', products.length);
             renderProducts();
         } catch (error) {
             console.error('Error loading products:', error);
@@ -229,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             isLoading = true;
-            const submitBtn = productForm.querySelector('button[type="submit"]') || productForm.querySelector('.cta-button');
+            const submitBtn = productForm.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Saving...';
@@ -242,26 +238,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 category: productCategoryInput.value,
                 imageFront: imagePreviewFront.src,
                 imageBack: imagePreviewBack.src || null,
-                // Keep backward compatibility
-                image: imagePreviewFront.src
+                image: imagePreviewFront.src // Backward compatibility
             };
 
             let savedProduct;
             if (id) {
                 // Update existing product
-                savedProduct = await window.dbService.updateProduct(parseInt(id), productData);
+                savedProduct = window.productsManager.updateProduct(id, productData);
                 console.log('Product updated:', savedProduct);
             } else {
                 // Add new product
-                savedProduct = await window.dbService.addProduct(productData);
+                savedProduct = window.productsManager.addProduct(productData);
                 console.log('Product added:', savedProduct);
             }
 
-            // Reload products from database
+            // Reload products
             await loadProducts();
             closeModal();
 
-            // Show success message
             alert(id ? 'Product updated successfully!' : 'Product added successfully!');
 
         } catch (error) {
@@ -269,10 +263,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Error saving product: ' + error.message);
         } finally {
             isLoading = false;
-            const submitBtn = productForm.querySelector('button[type="submit"]') || productForm.querySelector('.cta-button');
+            const submitBtn = productForm.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = id ? 'Update Product' : 'Add Product';
+                submitBtn.textContent = 'Save Product';
             }
         }
     });
@@ -290,10 +284,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
                 try {
-                    await window.dbService.deleteProduct(parseInt(id));
+                    window.productsManager.deleteProduct(id);
                     console.log('Product deleted:', id);
 
-                    // Reload products from database
+                    // Reload products
                     await loadProducts();
                     alert('Product deleted successfully!');
                 } catch (error) {
@@ -304,12 +298,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Initialize: Load products from Supabase
+    // Initialize: Load products
     await loadProducts();
-
-    // Optional: Migrate localStorage products to Supabase (run once)
-    // Uncomment the line below if you want to migrate existing localStorage products
-    // await window.dbService.migrateLocalStorageProducts();
 });
 </script>
 </body>
