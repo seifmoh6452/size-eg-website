@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": "products/Astro World T-shirt Back .jpg",
             "image": "products/Astro World T-shirt .jpg",
             "stock": 25,
-            "featured": true
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 2,
@@ -49,7 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": null,
             "image": "products/Cactus Jack T-Shirt.jpg",
             "stock": 30,
-            "featured": true
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 3,
@@ -61,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": "products/Regret Nothing T- Shirt back .jpg",
             "image": "products/Regret Nothing T- Shirt.jpg",
             "stock": 20,
-            "featured": false
+            "featured": false,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 4,
@@ -73,7 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": "products/Sniper T-Shirt Back.jpg",
             "image": "products/Sniper T-Shirt.jpg",
             "stock": 15,
-            "featured": true
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 5,
@@ -85,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": null,
             "image": "products/Space Travis T-Shirt.jpg",
             "stock": 18,
-            "featured": false
+            "featured": false,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 6,
@@ -97,7 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": null,
             "image": "products/classic shorts.jpg",
             "stock": 35,
-            "featured": false
+            "featured": false,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         },
         {
             "id": 7,
@@ -109,7 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "imageBack": "products/The Pink King Shorts back.jpg",
             "image": "products/The Pink King Shorts.jpg",
             "stock": 22,
-            "featured": true
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         }
     ];
 
@@ -136,6 +150,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             products = await window.productsManager.loadProducts();
             console.log('Loaded products:', products.length);
+            console.log('Sample product from manager:', products[0]);
+
+            // Force add sizes to all products
+            products = products.map(product => ({
+                ...product,
+                hasSize: true,
+                sizes: ["S", "M", "L", "XL"]
+            }));
+            console.log('Added sizes to all products');
 
             if (products.length === 0) {
                 showEmptyState();
@@ -153,6 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (storedProducts) {
                 products = JSON.parse(storedProducts);
                 console.log('Loaded products from localStorage:', products.length);
+
+                // Force add sizes to all products
+                products = products.map(product => ({
+                    ...product,
+                    hasSize: true,
+                    sizes: ["S", "M", "L", "XL"]
+                }));
+                console.log('Added sizes to localStorage products');
                 return;
             }
         } catch (error) {
@@ -163,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Using embedded products data as fallback');
         products = EMBEDDED_PRODUCTS;
         console.log('Loaded embedded products:', products.length);
+        console.log('First product details:', products[0]);
 
         if (products.length === 0) {
             showEmptyState();
@@ -389,6 +421,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create product card
     function createProductCard(product, index) {
+        console.log('Creating card for product:', product.name, 'hasSize:', product.hasSize, 'sizes:', product.sizes);
+
         const card = document.createElement('div');
         card.className = 'product-card-2025';
         card.style.setProperty('--card-index', index);
@@ -437,7 +471,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${hasDiscount ? `<span class="original-price-2025">EGP ${product.originalPrice}</span>` : ''}
                     ${hasDiscount ? `<span class="discount-badge-2025">-${discountPercent}%</span>` : ''}
                 </div>
-                <button class="product-cta-2025" onclick="addToCart(${product.id})">
+                <div class="size-selector">
+                    <label class="size-label">Size:</label>
+                    <select class="size-select" id="size-${product.id}" required>
+                        <option value="">Select Size</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+                <button class="product-cta-2025" onclick="addToCartWithSize(${product.id})">
                     Add to Cart
                 </button>
             </div>
@@ -690,54 +734,89 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global functions
-    window.addToCart = function(productId) {
+    window.addToCartWithSize = function(productId) {
         const product = products.find(p => p.id === productId);
-        if (product) {
-            // Get current cart from localStorage
-            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!product) return;
 
-            // Check if item already exists in cart
-            const existingItem = cart.find(item => item.id === product.id);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.imageFront || product.image,
-                    category: product.category,
-                    quantity: 1
-                });
+        let selectedSize = null;
+
+        // Always require size selection for clothing
+        const sizeSelect = document.getElementById(`size-${productId}`);
+        if (sizeSelect) {
+            selectedSize = sizeSelect.value;
+            if (!selectedSize) {
+                showNotification('Please select a size first!', 'error');
+                sizeSelect.focus();
+                return;
             }
-
-            // Save cart to localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
-
-            // Update cart badge
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const cartBadge = document.querySelector('.cart-badge');
-            if (cartBadge) {
-                cartBadge.textContent = totalItems;
-                if (totalItems > 0) {
-                    cartBadge.classList.add('show');
-                    cartBadge.style.display = 'flex';
-                } else {
-                    cartBadge.classList.remove('show');
-                    cartBadge.style.display = 'none';
-                }
-            }
-
-            // Show success notification
-            showNotification(`${product.name} added to cart!`, 'success');
-
-            // Trigger storage event for other pages
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'cart',
-                newValue: JSON.stringify(cart)
-            }));
         }
+
+        // Get current cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        // Create unique item key (id + size for items with sizes)
+        const itemKey = product.hasSize ? `${product.id}-${selectedSize}` : product.id;
+
+        // Check if item already exists in cart (same product + same size)
+        const existingItem = cart.find(item => {
+            return item.id === product.id && item.size === selectedSize;
+        });
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            const cartItem = {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.imageFront || product.image,
+                category: product.category,
+                quantity: 1
+            };
+
+            // Always add size for clothing
+            cartItem.size = selectedSize;
+            cartItem.displayName = `${product.name} (${selectedSize})`;
+
+            cart.push(cartItem);
+        }
+
+        // Save cart to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Update cart badge
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartBadge = document.querySelector('.cart-badge');
+        if (cartBadge) {
+            cartBadge.textContent = totalItems;
+            if (totalItems > 0) {
+                cartBadge.classList.add('show');
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.classList.remove('show');
+                cartBadge.style.display = 'none';
+            }
+        }
+
+        // Show success notification
+        const sizeText = selectedSize ? ` (Size: ${selectedSize})` : '';
+        showNotification(`${product.name}${sizeText} added to cart!`, 'success');
+
+        // Reset size selection
+        const sizeSelectReset = document.getElementById(`size-${productId}`);
+        if (sizeSelectReset) {
+            sizeSelectReset.value = '';
+        }
+
+        // Trigger storage event for other pages
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'cart',
+            newValue: JSON.stringify(cart)
+        }));
     };
+
+    // Backward compatibility
+    window.addToCart = window.addToCartWithSize;
 
     // Show notification function
     function showNotification(message, type = 'info') {

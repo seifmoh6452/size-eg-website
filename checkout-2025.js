@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const orderItemsContainer = document.getElementById('order-items');
     const checkoutSubtotal = document.getElementById('checkout-subtotal');
     const checkoutShipping = document.getElementById('checkout-shipping');
-    const checkoutTax = document.getElementById('checkout-tax');
     const checkoutTotal = document.getElementById('checkout-total');
     const btnTotal = document.getElementById('btn-total');
     const checkoutForm = document.getElementById('checkout-form');
@@ -97,15 +96,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateTotals() {
         orderSummary.subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         orderSummary.shipping = 50; // Fixed delivery fee: 50 EGP
-        orderSummary.donation = orderSummary.subtotal * 0.05; // 5% donation to the poor
-        orderSummary.total = orderSummary.subtotal + orderSummary.shipping + orderSummary.donation;
+        orderSummary.total = orderSummary.subtotal + orderSummary.shipping;
     }
 
     // Update total displays
     function updateTotalDisplays() {
         if (checkoutSubtotal) checkoutSubtotal.textContent = `EGP ${orderSummary.subtotal.toFixed(0)}`;
         if (checkoutShipping) checkoutShipping.textContent = `EGP ${orderSummary.shipping.toFixed(0)}`;
-        if (checkoutTax) checkoutTax.textContent = `EGP ${orderSummary.donation.toFixed(0)}`;
         if (checkoutTotal) checkoutTotal.textContent = `EGP ${orderSummary.total.toFixed(0)}`;
         if (btnTotal) btnTotal.textContent = `EGP ${orderSummary.total.toFixed(0)}`;
     }
@@ -286,8 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         message += `🛒 *Order Items:*\n`;
         items.forEach((item, index) => {
-            message += `${index + 1}. ${item.name}\n`;
+            message += `${index + 1}. ${item.displayName || item.name}\n`;
             message += `   • Category: ${item.category}\n`;
+            if (item.size) {
+                message += `   • Size: ${item.size}\n`;
+            }
             message += `   • Price: EGP ${item.price}\n`;
             message += `   • Quantity: ${item.quantity}\n`;
             message += `   • Subtotal: EGP ${(item.price * item.quantity).toFixed(0)}\n\n`;
@@ -296,7 +296,6 @@ document.addEventListener('DOMContentLoaded', function() {
         message += `💰 *Order Summary:*\n`;
         message += `• Subtotal: EGP ${totals.subtotal.toFixed(0)}\n`;
         message += `• Delivery: EGP ${totals.shipping.toFixed(0)}\n`;
-        message += `• Donation to the Poor (5%): EGP ${totals.donation.toFixed(0)}\n`;
         message += `• *Total: EGP ${totals.total.toFixed(0)}*\n\n`;
 
         message += `💳 *Payment Method:* Cash on Delivery 💵\n\n`;
@@ -326,7 +325,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         message += `🛒 *Your Items:*\n`;
         items.forEach((item, index) => {
-            message += `${index + 1}. ${item.name} (Qty: ${item.quantity})\n`;
+            const itemName = item.displayName || item.name;
+            const sizeText = item.size ? ` - Size: ${item.size}` : '';
+            message += `${index + 1}. ${itemName}${sizeText} (Qty: ${item.quantity})\n`;
         });
         message += `\n`;
 
@@ -336,7 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
         message += `• We'll keep you updated! 📱\n\n`;
 
         message += `💬 *Questions?*\n`;
-        message += `Feel free to reply to this message anytime!\n\n`;
+        message += `📧 Email: Zeinafify2@gmail.com\n`;
+        message += `💬 WhatsApp: Reply to this message anytime!\n\n`;
 
         message += `🏪 *Size.eg - Modern Egyptian Streetwear*\n`;
         message += `Thank you for choosing us! 🙏\n\n`;

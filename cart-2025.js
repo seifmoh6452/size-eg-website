@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const emptyCartContainer = document.getElementById('empty-cart');
     const cartCountElement = document.getElementById('cart-count');
     const subtotalElement = document.getElementById('subtotal');
-    const taxElement = document.getElementById('tax');
     const totalElement = document.getElementById('total');
     const checkoutBtn = document.getElementById('checkout-btn');
     const clearCartBtn = document.getElementById('clear-cart');
@@ -48,25 +47,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create cart item HTML
     function createCartItemHTML(item) {
+        const displayName = item.displayName || item.name;
+        const sizeInfo = item.size ? `<p class="item-size">Size: <strong>${item.size}</strong></p>` : '';
+
         return `
-            <div class="cart-item" data-id="${item.id}">
-                <img src="${item.image}" alt="${item.name}" class="item-image">
+            <div class="cart-item" data-id="${item.id}" data-size="${item.size || ''}">
+                <img src="${item.image}" alt="${displayName}" class="item-image">
                 <div class="item-details">
-                    <h3 class="item-name">${item.name}</h3>
+                    <h3 class="item-name">${displayName}</h3>
                     <p class="item-category">${item.category}</p>
+                    ${sizeInfo}
                     <p class="item-price">EGP ${item.price}</p>
                 </div>
                 <div class="item-actions">
                     <div class="quantity-controls">
-                        <button class="qty-btn minus" data-id="${item.id}">
+                        <button class="qty-btn minus" data-id="${item.id}" data-size="${item.size || ''}">
                             <i class="fas fa-minus"></i>
                         </button>
-                        <input type="number" class="qty-input" value="${item.quantity}" min="1" data-id="${item.id}">
-                        <button class="qty-btn plus" data-id="${item.id}">
+                        <input type="number" class="qty-input" value="${item.quantity}" min="1" data-id="${item.id}" data-size="${item.size || ''}">
+                        <button class="qty-btn plus" data-id="${item.id}" data-size="${item.size || ''}">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <button class="remove-item" data-id="${item.id}">
+                    <button class="remove-item" data-id="${item.id}" data-size="${item.size || ''}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -97,23 +100,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.qty-btn.plus').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.id);
-                updateQuantity(id, 1);
+                const size = btn.dataset.size || null;
+                updateQuantity(id, 1, size);
             });
         });
 
         document.querySelectorAll('.qty-btn.minus').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.id);
-                updateQuantity(id, -1);
+                const size = btn.dataset.size || null;
+                updateQuantity(id, -1, size);
             });
         });
 
         document.querySelectorAll('.qty-input').forEach(input => {
             input.addEventListener('change', () => {
                 const id = parseInt(input.dataset.id);
+                const size = input.dataset.size || null;
                 const newQuantity = parseInt(input.value);
                 if (newQuantity > 0) {
-                    setQuantity(id, newQuantity);
+                    setQuantity(id, newQuantity, size);
                 }
             });
         });
@@ -122,18 +128,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.remove-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.id);
-                removeFromCart(id);
+                const size = btn.dataset.size || null;
+                removeFromCart(id, size);
             });
         });
     }
 
     // Update item quantity
-    function updateQuantity(id, change) {
-        const item = cart.find(item => item.id === id);
+    function updateQuantity(id, change, size = null) {
+        const item = cart.find(item => {
+            if (size) {
+                return item.id === id && item.size === size;
+            } else {
+                return item.id === id && !item.size;
+            }
+        });
+
         if (item) {
             item.quantity += change;
             if (item.quantity <= 0) {
-                removeFromCart(id);
+                removeFromCart(id, size);
             } else {
                 saveCart();
                 updateCartDisplay();
@@ -142,8 +156,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Set item quantity
-    function setQuantity(id, quantity) {
-        const item = cart.find(item => item.id === id);
+    function setQuantity(id, quantity, size = null) {
+        const item = cart.find(item => {
+            if (size) {
+                return item.id === id && item.size === size;
+            } else {
+                return item.id === id && !item.size;
+            }
+        });
+
         if (item) {
             item.quantity = quantity;
             saveCart();
@@ -152,13 +173,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Remove item from cart
-    function removeFromCart(id) {
-        cart = cart.filter(item => item.id !== id);
+    function removeFromCart(id, size = null) {
+        cart = cart.filter(item => {
+            if (size) {
+                return !(item.id === id && item.size === size);
+            } else {
+                return !(item.id === id && !item.size);
+            }
+        });
+
         saveCart();
         updateCartDisplay();
-        
+
         // Show notification
-        showNotification('Item removed from cart', 'success');
+        const sizeText = size ? ` (Size: ${size})` : '';
+        showNotification(`Item${sizeText} removed from cart`, 'success');
     }
 
     // Clear entire cart
@@ -175,14 +204,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCartSummary() {
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const shipping = 50; // Fixed delivery fee: 50 EGP
-        const donation = subtotal * 0.05; // 5% donation to the poor
         const discount = subtotal * (promoDiscount / 100);
-        const total = subtotal + shipping + donation - discount;
+        const total = subtotal + shipping - discount;
 
         if (subtotalElement) subtotalElement.textContent = `EGP ${subtotal.toFixed(0)}`;
         const shippingElement = document.getElementById('shipping');
         if (shippingElement) shippingElement.textContent = `EGP ${shipping.toFixed(0)}`;
-        if (taxElement) taxElement.textContent = `EGP ${donation.toFixed(0)}`;
         if (totalElement) totalElement.textContent = `EGP ${total.toFixed(0)}`;
     }
 
