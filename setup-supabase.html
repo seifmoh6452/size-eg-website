@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Setup - Size.eg</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .step h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .sql-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #2980b9;
+        }
+        .button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/database.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Supabase Setup for Size.eg</h1>
+        
+        <div class="step">
+            <h3><span class="step-number">1</span>Create Products Table</h3>
+            <p>First, you need to create the products table in your Supabase database. Copy this SQL and run it in your Supabase SQL Editor:</p>
+            
+            <div class="sql-code">
+CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    category TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    image_front TEXT,
+    image_back TEXT,
+    sizes TEXT DEFAULT '["S","M","L","XL"]',
+    colors TEXT DEFAULT '["Black","White"]',
+    stock INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable Row Level Security (optional but recommended)
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow public read access
+CREATE POLICY "Allow public read access" ON products
+    FOR SELECT USING (true);
+
+-- Create policy to allow authenticated users to insert/update/delete
+CREATE POLICY "Allow authenticated users full access" ON products
+    FOR ALL USING (auth.role() = 'authenticated');
+            </div>
+            
+            <button class="button" onclick="copySQL()">📋 Copy SQL</button>
+            <div id="copy-status"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">2</span>Create Storage Bucket</h3>
+            <p>Create a storage bucket for product images in Supabase Storage:</p>
+            <ol>
+                <li>Go to Storage in your Supabase dashboard</li>
+                <li>Click "Create bucket"</li>
+                <li>Name: <strong>product-images</strong></li>
+                <li>Make it <strong>Public</strong></li>
+                <li>Click "Create bucket"</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">3</span>Test Database Connection</h3>
+            <p>Test if your database connection is working:</p>
+            <button class="button" onclick="testConnection()" id="test-btn">🔗 Test Connection</button>
+            <div id="connection-status"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">4</span>Migrate Existing Products</h3>
+            <p>If you have products in localStorage, migrate them to Supabase:</p>
+            <div id="migration-info"></div>
+            <button class="button" onclick="migrateProducts()" id="migrate-btn">📦 Migrate Products</button>
+            <div id="migration-status"></div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">5</span>Verify Setup</h3>
+            <p>Check if everything is working correctly:</p>
+            <button class="button" onclick="verifySetup()" id="verify-btn">✅ Verify Setup</button>
+            <div id="verify-status"></div>
+        </div>
+
+        <div class="info">
+            <strong>📝 Note:</strong> After completing the setup, you can delete this file. Your products will now be stored in Supabase and accessible from any device!
+        </div>
+    </div>
+
+    <script>
+        function copySQL() {
+            const sql = `CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    category TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    image_front TEXT,
+    image_back TEXT,
+    sizes TEXT DEFAULT '["S","M","L","XL"]',
+    colors TEXT DEFAULT '["Black","White"]',
+    stock INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access" ON products
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow authenticated users full access" ON products
+    FOR ALL USING (auth.role() = 'authenticated');`;
+
+            navigator.clipboard.writeText(sql).then(() => {
+                document.getElementById('copy-status').innerHTML = '<div class="success">✅ SQL copied to clipboard!</div>';
+            }).catch(() => {
+                document.getElementById('copy-status').innerHTML = '<div class="error">❌ Failed to copy. Please copy manually.</div>';
+            });
+        }
+
+        async function testConnection() {
+            const btn = document.getElementById('test-btn');
+            const status = document.getElementById('connection-status');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing...';
+            
+            try {
+                if (!window.dbService) {
+                    throw new Error('Database service not loaded');
+                }
+                
+                const products = await window.dbService.getAllProducts();
+                status.innerHTML = '<div class="success">✅ Connection successful! Found ' + products.length + ' products in database.</div>';
+            } catch (error) {
+                status.innerHTML = '<div class="error">❌ Connection failed: ' + error.message + '</div>';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔗 Test Connection';
+            }
+        }
+
+        async function migrateProducts() {
+            const btn = document.getElementById('migrate-btn');
+            const status = document.getElementById('migration-status');
+            const info = document.getElementById('migration-info');
+            
+            // Check localStorage first
+            const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+            info.innerHTML = `<div class="info">Found ${localProducts.length} products in localStorage</div>`;
+            
+            if (localProducts.length === 0) {
+                status.innerHTML = '<div class="info">ℹ️ No products found in localStorage to migrate.</div>';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '📦 Migrating...';
+            
+            try {
+                await window.dbService.migrateLocalStorageProducts();
+                status.innerHTML = '<div class="success">✅ Migration completed successfully!</div>';
+            } catch (error) {
+                status.innerHTML = '<div class="error">❌ Migration failed: ' + error.message + '</div>';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📦 Migrate Products';
+            }
+        }
+
+        async function verifySetup() {
+            const btn = document.getElementById('verify-btn');
+            const status = document.getElementById('verify-status');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Verifying...';
+            
+            try {
+                // Test database connection
+                const products = await window.dbService.getAllProducts();
+                
+                // Test adding a sample product
+                const testProduct = {
+                    name: 'Test Product',
+                    price: 100,
+                    category: 't-shirt',
+                    imageFront: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGVzdDwvdGV4dD48L3N2Zz4='
+                };
+                
+                const addedProduct = await window.dbService.addProduct(testProduct);
+                
+                // Delete the test product
+                await window.dbService.deleteProduct(addedProduct.id);
+                
+                status.innerHTML = '<div class="success">✅ Setup verification successful! Your Supabase database is working correctly.</div>';
+            } catch (error) {
+                status.innerHTML = '<div class="error">❌ Verification failed: ' + error.message + '</div>';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ Verify Setup';
+            }
+        }
+
+        // Check localStorage on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+            document.getElementById('migration-info').innerHTML = 
+                `<div class="info">Found ${localProducts.length} products in localStorage ready for migration</div>`;
+        });
+    </script>
+</body>
+</html>

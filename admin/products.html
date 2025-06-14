@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="admin-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body class="admin-body">
     <div class="admin-layout">
@@ -84,9 +86,11 @@
     </div>
 </body>
 </html>
+<script src="../js/database.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const products = [];
+document.addEventListener('DOMContentLoaded', async () => {
+    let products = [];
+    let isLoading = false;
 
     const productsTable = document.getElementById('products-table').getElementsByTagName('tbody')[0];
     const modal = document.getElementById('product-modal');
@@ -102,6 +106,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const productImageBackInput = document.getElementById('product-image-back');
     const imagePreviewFront = document.getElementById('image-preview-front');
     const imagePreviewBack = document.getElementById('image-preview-back');
+
+    // Load products from Supabase
+    async function loadProducts() {
+        try {
+            isLoading = true;
+            showLoadingState();
+
+            const supabaseProducts = await window.dbService.getAllProducts();
+            products = supabaseProducts.map(p => window.dbService.convertSupabaseProduct(p));
+
+            console.log('Loaded products from Supabase:', products.length);
+            renderProducts();
+        } catch (error) {
+            console.error('Error loading products:', error);
+            showErrorState('Failed to load products');
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    function showLoadingState() {
+        productsTable.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Loading products...</td></tr>';
+    }
+
+    function showErrorState(message) {
+        productsTable.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">${message}</td></tr>`;
+    }
 
     function renderProducts() {
         productsTable.innerHTML = '';
@@ -191,33 +222,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    productForm.addEventListener('submit', (e) => {
+    productForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = productIdInput.value;
-        const newProduct = {
-            id: id ? parseInt(id) : Date.now(),
-            name: productNameInput.value,
-            price: parseInt(productPriceInput.value),
-            category: productCategoryInput.value,
-            imageFront: imagePreviewFront.src,
-            imageBack: imagePreviewBack.src || null,
-            // Keep backward compatibility
-            image: imagePreviewFront.src
-        };
 
-        if (id) {
-            const index = products.findIndex(p => p.id == id);
-            products[index] = newProduct;
-        } else {
-            products.push(newProduct);
+        if (isLoading) return;
+
+        try {
+            isLoading = true;
+            const submitBtn = productForm.querySelector('button[type="submit"]') || productForm.querySelector('.cta-button');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+            }
+
+            const id = productIdInput.value;
+            const productData = {
+                name: productNameInput.value,
+                price: parseInt(productPriceInput.value),
+                category: productCategoryInput.value,
+                imageFront: imagePreviewFront.src,
+                imageBack: imagePreviewBack.src || null,
+                // Keep backward compatibility
+                image: imagePreviewFront.src
+            };
+
+            let savedProduct;
+            if (id) {
+                // Update existing product
+                savedProduct = await window.dbService.updateProduct(parseInt(id), productData);
+                console.log('Product updated:', savedProduct);
+            } else {
+                // Add new product
+                savedProduct = await window.dbService.addProduct(productData);
+                console.log('Product added:', savedProduct);
+            }
+
+            // Reload products from database
+            await loadProducts();
+            closeModal();
+
+            // Show success message
+            alert(id ? 'Product updated successfully!' : 'Product added successfully!');
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            alert('Error saving product: ' + error.message);
+        } finally {
+            isLoading = false;
+            const submitBtn = productForm.querySelector('button[type="submit"]') || productForm.querySelector('.cta-button');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = id ? 'Update Product' : 'Add Product';
+            }
         }
-
-        localStorage.setItem('products', JSON.stringify(products));
-        renderProducts();
-        closeModal();
     });
 
-    productsTable.addEventListener('click', (e) => {
+    productsTable.addEventListener('click', async (e) => {
         if (e.target.classList.contains('edit-btn')) {
             const id = e.target.dataset.id;
             const product = products.find(p => p.id == id);
@@ -226,21 +286,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.target.classList.contains('delete-btn')) {
             const id = e.target.dataset.id;
-            const index = products.findIndex(p => p.id == id);
-            products.splice(index, 1);
-            localStorage.setItem('products', JSON.stringify(products));
-            renderProducts();
+            const product = products.find(p => p.id == id);
+
+            if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+                try {
+                    await window.dbService.deleteProduct(parseInt(id));
+                    console.log('Product deleted:', id);
+
+                    // Reload products from database
+                    await loadProducts();
+                    alert('Product deleted successfully!');
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    alert('Error deleting product: ' + error.message);
+                }
+            }
         }
     });
 
-    // Load products from local storage if available
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-        products.length = 0;
-        Array.prototype.push.apply(products, JSON.parse(storedProducts));
-    }
+    // Initialize: Load products from Supabase
+    await loadProducts();
 
-    renderProducts();
+    // Optional: Migrate localStorage products to Supabase (run once)
+    // Uncomment the line below if you want to migrate existing localStorage products
+    // await window.dbService.migrateLocalStorageProducts();
 });
 </script>
 </body>

@@ -36,13 +36,37 @@ document.addEventListener('DOMContentLoaded', () => {
     let visibleProducts = 6;
     let filteredProducts = [...products];
 
-    // Load products from localStorage (admin panel)
-    function loadProducts() {
+    // Load products from Supabase
+    async function loadProducts() {
+        try {
+            // Check if database service is available
+            if (!window.dbService) {
+                console.log('Database service not available, falling back to localStorage');
+                loadProductsFromLocalStorage();
+                return;
+            }
+
+            const supabaseProducts = await window.dbService.getAllProducts();
+            if (supabaseProducts && supabaseProducts.length > 0) {
+                products = supabaseProducts.map(p => window.dbService.convertSupabaseProduct(p));
+                console.log('Loaded products from Supabase:', products.length);
+            } else {
+                products = [];
+                showEmptyState();
+            }
+        } catch (error) {
+            console.log('Error loading products from Supabase, falling back to localStorage:', error);
+            loadProductsFromLocalStorage();
+        }
+    }
+
+    // Fallback: Load products from localStorage (admin panel)
+    function loadProductsFromLocalStorage() {
         try {
             const storedProducts = localStorage.getItem('products');
             if (storedProducts) {
                 products = JSON.parse(storedProducts);
-                console.log('Loaded products from admin:', products.length);
+                console.log('Loaded products from localStorage:', products.length);
             } else {
                 products = [];
                 showEmptyState();
@@ -69,9 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Refresh products from localStorage
-    function refreshProducts() {
-        loadProducts();
+    // Refresh products from database
+    async function refreshProducts() {
+        await loadProducts();
         updateProductCounts();
         filterProducts();
         renderProducts();
@@ -137,13 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize page
-    function init() {
+    async function init() {
         console.log('Initializing products page...');
 
         // Check elements first
         checkElements();
 
-        loadProducts();
+        await loadProducts();
         loadCartCount(); // Load cart count on page load
         updateProductCounts();
         filterProducts(); // Apply filters first
