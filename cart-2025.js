@@ -277,6 +277,78 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize cart
     loadCart();
 
+    // Mobile cart optimizations
+    if (window.innerWidth <= 768) {
+        // Add mobile-specific cart optimizations
+        document.body.classList.add('mobile-cart');
+
+        // Optimize cart for mobile
+        const cartContainer = document.querySelector('.cart-content');
+        if (cartContainer) {
+            cartContainer.style.gridTemplateColumns = '1fr';
+            cartContainer.style.gap = '1rem';
+            cartContainer.style.padding = '1rem';
+        }
+
+        // Make cart items more touch-friendly
+        const cartItems = document.querySelectorAll('.cart-item');
+        cartItems.forEach(item => {
+            item.style.padding = '1.5rem 1rem';
+            item.style.borderRadius = '12px';
+            item.style.marginBottom = '1rem';
+            item.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+
+        // Optimize quantity controls for touch
+        const quantityBtns = document.querySelectorAll('.qty-btn');
+        quantityBtns.forEach(btn => {
+            btn.style.minWidth = '44px';
+            btn.style.minHeight = '44px';
+            btn.style.fontSize = '1.2rem';
+            btn.style.borderRadius = '8px';
+        });
+
+        // Optimize checkout button for mobile
+        const checkoutBtn = document.querySelector('.checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.style.width = '100%';
+            checkoutBtn.style.padding = '1rem';
+            checkoutBtn.style.fontSize = '1.2rem';
+            checkoutBtn.style.minHeight = '56px';
+            checkoutBtn.style.borderRadius = '8px';
+            checkoutBtn.style.position = 'sticky';
+            checkoutBtn.style.bottom = '1rem';
+            checkoutBtn.style.zIndex = '10';
+        }
+
+        // Improve scrolling on mobile
+        const cartItemsContainer = document.querySelector('.cart-items');
+        if (cartItemsContainer) {
+            cartItemsContainer.style.webkitOverflowScrolling = 'touch';
+            cartItemsContainer.style.maxHeight = 'calc(100vh - 300px)';
+            cartItemsContainer.style.overflowY = 'auto';
+        }
+
+        // Add touch feedback
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.classList.contains('qty-btn') ||
+                e.target.classList.contains('remove-item') ||
+                e.target.classList.contains('checkout-btn')) {
+                e.target.style.transform = 'scale(0.95)';
+            }
+        });
+
+        document.addEventListener('touchend', function(e) {
+            if (e.target.classList.contains('qty-btn') ||
+                e.target.classList.contains('remove-item') ||
+                e.target.classList.contains('checkout-btn')) {
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 100);
+            }
+        });
+    }
+
     // Add CSS for notification animation
     const style = document.createElement('style');
     style.textContent = `
