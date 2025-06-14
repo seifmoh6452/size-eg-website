@@ -25,6 +25,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCountEl = document.getElementById('total-count');
     const activeFiltersEl = document.getElementById('active-filters');
 
+    // Embedded products data (fallback for hosting platforms)
+    const EMBEDDED_PRODUCTS = [
+        {
+            "id": 1,
+            "name": "Astro World T-shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Exclusive Astro World design t-shirt",
+            "imageFront": "products/Astro World T-shirt .jpg",
+            "imageBack": "products/Astro World T-shirt Back .jpg",
+            "image": "products/Astro World T-shirt .jpg",
+            "stock": 25,
+            "featured": true
+        },
+        {
+            "id": 2,
+            "name": "Cactus Jack T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Official Cactus Jack design t-shirt",
+            "imageFront": "products/Cactus Jack T-Shirt.jpg",
+            "imageBack": null,
+            "image": "products/Cactus Jack T-Shirt.jpg",
+            "stock": 30,
+            "featured": true
+        },
+        {
+            "id": 3,
+            "name": "Regret Nothing T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Motivational Regret Nothing design",
+            "imageFront": "products/Regret Nothing T- Shirt.jpg",
+            "imageBack": "products/Regret Nothing T- Shirt back .jpg",
+            "image": "products/Regret Nothing T- Shirt.jpg",
+            "stock": 20,
+            "featured": false
+        },
+        {
+            "id": 4,
+            "name": "Sniper T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Cool Sniper design t-shirt",
+            "imageFront": "products/Sniper T-Shirt.jpg",
+            "imageBack": "products/Sniper T-Shirt Back.jpg",
+            "image": "products/Sniper T-Shirt.jpg",
+            "stock": 15,
+            "featured": true
+        },
+        {
+            "id": 5,
+            "name": "Space Travis T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Space Travis design t-shirt",
+            "imageFront": "products/Space Travis T-Shirt.jpg",
+            "imageBack": null,
+            "image": "products/Space Travis T-Shirt.jpg",
+            "stock": 18,
+            "featured": false
+        },
+        {
+            "id": 6,
+            "name": "Classic Shorts",
+            "price": 450,
+            "category": "shorts",
+            "description": "Comfortable classic shorts",
+            "imageFront": "products/classic shorts.jpg",
+            "imageBack": null,
+            "image": "products/classic shorts.jpg",
+            "stock": 35,
+            "featured": false
+        },
+        {
+            "id": 7,
+            "name": "The Pink King Shorts",
+            "price": 450,
+            "category": "shorts",
+            "description": "Stylish Pink King design shorts",
+            "imageFront": "products/The Pink King Shorts.jpg",
+            "imageBack": "products/The Pink King Shorts back.jpg",
+            "image": "products/The Pink King Shorts.jpg",
+            "stock": 22,
+            "featured": true
+        }
+    ];
+
     // Products data - loaded from admin/database
     let products = [];
 
@@ -58,20 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fallback: Load products from localStorage
+    // Fallback: Load products from localStorage or embedded data
     function loadProductsFromLocalStorage() {
         try {
             const storedProducts = localStorage.getItem('products');
             if (storedProducts) {
                 products = JSON.parse(storedProducts);
                 console.log('Loaded products from localStorage:', products.length);
-            } else {
-                products = [];
-                showEmptyState();
+                return;
             }
         } catch (error) {
             console.log('Error loading products from localStorage:', error);
-            products = [];
+        }
+
+        // Final fallback: Use embedded products data
+        console.log('Using embedded products data as fallback');
+        products = EMBEDDED_PRODUCTS;
+        console.log('Loaded embedded products:', products.length);
+
+        if (products.length === 0) {
             showEmptyState();
         }
     }
