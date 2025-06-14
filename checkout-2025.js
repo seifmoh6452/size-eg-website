@@ -2,8 +2,8 @@
 
 // ===== CALLMEBOT CONFIGURATION (EASIEST & FREE) =====
 const WHATSAPP_CONFIG = {
-    businessNumber: "201000041073", // ✅ Your WhatsApp number
-    apiKey: "5059431", // ✅ Your CallMeBot API key
+    businessNumber: "201111034229", // ✅ Your WhatsApp number
+    apiKey: "8625233", // ✅ Your CallMeBot API key
     businessName: "Size.eg",
     autoSendEnabled: true // Automatic sending only
 };
