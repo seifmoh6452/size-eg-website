@@ -136,8 +136,12 @@
             if (order.items && order.items.length > 0) {
                 details += `ITEMS:\n`;
                 order.items.forEach((item, index) => {
-                    details += `${index + 1}. ${item.name}\n`;
+                    const itemName = item.displayName || item.name;
+                    details += `${index + 1}. ${itemName}\n`;
                     details += `   Category: ${item.category}\n`;
+                    if (item.size) {
+                        details += `   Size: ${item.size}\n`;
+                    }
                     details += `   Price: EGP ${item.price}\n`;
                     details += `   Quantity: ${item.quantity}\n`;
                     details += `   Subtotal: EGP ${(item.price * item.quantity).toFixed(0)}\n\n`;
@@ -148,7 +152,6 @@
                 details += `ORDER SUMMARY:\n`;
                 details += `Subtotal: EGP ${order.totals.subtotal ? order.totals.subtotal.toFixed(0) : '0'}\n`;
                 details += `Delivery: EGP ${order.totals.shipping ? order.totals.shipping.toFixed(0) : '50'}\n`;
-                details += `Donation (5%): EGP ${order.totals.donation ? order.totals.donation.toFixed(0) : '0'}\n`;
                 details += `TOTAL: EGP ${order.totals.total ? order.totals.total.toFixed(0) : '0'}\n\n`;
             }
 

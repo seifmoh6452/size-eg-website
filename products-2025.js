@@ -124,6 +124,34 @@ document.addEventListener('DOMContentLoaded', () => {
             "featured": true,
             "sizes": ["S", "M", "L", "XL"],
             "hasSize": true
+        },
+        {
+            "id": 8,
+            "name": "Classic Size Cap",
+            "price": 450,
+            "category": "cap",
+            "description": "Classic Size.eg cap with premium design",
+            "imageFront": "products/Classic Size.jpg",
+            "imageBack": null,
+            "image": "products/Classic Size.jpg",
+            "stock": 30,
+            "featured": true,
+            "sizes": ["One Size"],
+            "hasSize": true
+        },
+        {
+            "id": 9,
+            "name": "Liberty T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Liberty design t-shirt with premium quality",
+            "imageFront": "products/liberty-tshirt.jpg",
+            "imageBack": "products/liberty-tshirt-back.jpg",
+            "image": "products/liberty-tshirt.jpg",
+            "stock": 25,
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         }
     ];
 
@@ -156,9 +184,51 @@ document.addEventListener('DOMContentLoaded', () => {
             products = products.map(product => ({
                 ...product,
                 hasSize: true,
-                sizes: ["S", "M", "L", "XL"]
+                sizes: product.category === 'cap' ? ["One Size"] : ["S", "M", "L", "XL"]
             }));
             console.log('Added sizes to all products');
+
+            // Force add cap if not present
+            const hasCapProduct = products.some(p => p.category === 'cap');
+            if (!hasCapProduct) {
+                console.log('Cap not found, adding it manually');
+                products.push({
+                    "id": 8,
+                    "name": "Classic Size Cap",
+                    "price": 450,
+                    "category": "cap",
+                    "description": "Classic Size.eg cap with premium design",
+                    "imageFront": "products/Classic Size.jpg",
+                    "imageBack": null,
+                    "image": "products/Classic Size.jpg",
+                    "stock": 30,
+                    "featured": true,
+                    "sizes": ["One Size"],
+                    "hasSize": true
+                });
+                console.log('Cap added, total products now:', products.length);
+            }
+
+            // Force add Liberty T-Shirt if not present
+            const hasLibertyProduct = products.some(p => p.name === 'Liberty T-Shirt');
+            if (!hasLibertyProduct) {
+                console.log('Liberty T-Shirt not found, adding it manually');
+                products.push({
+                    "id": 9,
+                    "name": "Liberty T-Shirt",
+                    "price": 450,
+                    "category": "t-shirt",
+                    "description": "Liberty design t-shirt with premium quality",
+                    "imageFront": "products/liberty-tshirt.jpg",
+                    "imageBack": "products/liberty-tshirt-back.jpg",
+                    "image": "products/liberty-tshirt.jpg",
+                    "stock": 25,
+                    "featured": true,
+                    "sizes": ["S", "M", "L", "XL"],
+                    "hasSize": true
+                });
+                console.log('Liberty T-Shirt added, total products now:', products.length);
+            }
 
             if (products.length === 0) {
                 showEmptyState();
@@ -181,9 +251,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 products = products.map(product => ({
                     ...product,
                     hasSize: true,
-                    sizes: ["S", "M", "L", "XL"]
+                    sizes: product.category === 'cap' ? ["One Size"] : ["S", "M", "L", "XL"]
                 }));
                 console.log('Added sizes to localStorage products');
+
+                // Force add cap if not present
+                const hasCapProduct = products.some(p => p.category === 'cap');
+                if (!hasCapProduct) {
+                    console.log('Cap not found in localStorage, adding it manually');
+                    products.push({
+                        "id": 8,
+                        "name": "Classic Size Cap",
+                        "price": 450,
+                        "category": "cap",
+                        "description": "Classic Size.eg cap with premium design",
+                        "imageFront": "products/Classic Size.jpg",
+                        "imageBack": null,
+                        "image": "products/Classic Size.jpg",
+                        "stock": 30,
+                        "featured": true,
+                        "sizes": ["One Size"],
+                        "hasSize": true
+                    });
+                    console.log('Cap added to localStorage products, total now:', products.length);
+                }
+
+                // Force add Liberty T-Shirt if not present
+                const hasLibertyProduct = products.some(p => p.name === 'Liberty T-Shirt');
+                if (!hasLibertyProduct) {
+                    console.log('Liberty T-Shirt not found in localStorage, adding it manually');
+                    products.push({
+                        "id": 9,
+                        "name": "Liberty T-Shirt",
+                        "price": 450,
+                        "category": "t-shirt",
+                        "description": "Liberty design t-shirt with premium quality",
+                        "imageFront": "products/liberty-tshirt.jpg",
+                        "imageBack": "products/liberty-tshirt-back.jpg",
+                        "image": "products/liberty-tshirt.jpg",
+                        "stock": 25,
+                        "featured": true,
+                        "sizes": ["S", "M", "L", "XL"],
+                        "hasSize": true
+                    });
+                    console.log('Liberty T-Shirt added to localStorage products, total now:', products.length);
+                }
                 return;
             }
         } catch (error) {
@@ -195,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         products = EMBEDDED_PRODUCTS;
         console.log('Loaded embedded products:', products.length);
         console.log('First product details:', products[0]);
+        console.log('Last product details (should be cap):', products[products.length - 1]);
 
         if (products.length === 0) {
             showEmptyState();
@@ -287,6 +400,10 @@ document.addEventListener('DOMContentLoaded', () => {
     async function init() {
         console.log('Initializing products page...');
 
+        // Clear any old cached products to ensure fresh load
+        console.log('Clearing cached products for fresh load...');
+        localStorage.removeItem('products');
+
         // Check elements first
         checkElements();
 
@@ -308,12 +425,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const counts = {
             all: products.length,
             't-shirt': products.filter(p => p.category === 't-shirt').length,
-            shorts: products.filter(p => p.category === 'shorts').length
+            shorts: products.filter(p => p.category === 'shorts').length,
+            cap: products.filter(p => p.category === 'cap').length
         };
+
+        console.log('Product counts:', counts);
+        console.log('Cap products found:', products.filter(p => p.category === 'cap').map(p => p.name));
+        console.log('T-shirt products found:', products.filter(p => p.category === 't-shirt').map(p => p.name));
+        console.log('All products loaded:', products.map(p => `${p.name} (${p.category})`));
 
         document.getElementById('count-all').textContent = counts.all;
         document.getElementById('count-tshirt').textContent = counts['t-shirt'];
         document.getElementById('count-shorts').textContent = counts.shorts;
+        document.getElementById('count-caps').textContent = counts.cap;
 
         if (totalProductsEl) {
             totalProductsEl.textContent = counts.all;
@@ -332,8 +456,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply category filter
         if (currentFilter !== 'all') {
+            console.log('Filtering by category:', currentFilter);
+            console.log('Products before filter:', filteredProducts.map(p => `${p.name} (${p.category})`));
             filteredProducts = filteredProducts.filter(p => p.category === currentFilter);
             console.log('After category filter:', filteredProducts.length);
+            console.log('Filtered products:', filteredProducts.map(p => `${p.name} (${p.category})`));
         }
 
         // Apply search filter
@@ -421,7 +548,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create product card
     function createProductCard(product, index) {
-        console.log('Creating card for product:', product.name, 'hasSize:', product.hasSize, 'sizes:', product.sizes);
+        console.log('Creating card for product:', product.name, 'category:', product.category, 'hasSize:', product.hasSize, 'sizes:', product.sizes);
+
+        if (product.category === 'cap') {
+            console.log('Creating CAP card for:', product.name, 'image:', product.imageFront);
+        }
 
         const card = document.createElement('div');
         card.className = 'product-card-2025';
@@ -433,6 +564,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle front and back images
         const frontImage = product.imageFront || product.image;
         const backImage = product.imageBack;
+
+        console.log(`Product: ${product.name}, Front Image: ${frontImage}, Back Image: ${backImage}`);
 
         card.innerHTML = `
             <div class="product-image-container-2025">
@@ -475,10 +608,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label class="size-label">Size:</label>
                     <select class="size-select" id="size-${product.id}" required>
                         <option value="">Select Size</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
+                        ${product.category === 'cap' ?
+                            '<option value="One Size">One Size</option>' :
+                            '<option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>'
+                        }
                     </select>
                 </div>
                 <button class="product-cta-2025" onclick="addToCartWithSize(${product.id})">
