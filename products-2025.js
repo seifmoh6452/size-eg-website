@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 products.push({
                     "id": 8,
                     "name": "Classic Size Cap",
-                    "price": 250,
+                    "price": 200,
                     "category": "cap",
                     "description": "Classic Size.eg cap with premium design",
                     "imageFront": "products/Classic Size.jpg",
