@@ -154,6 +154,48 @@ class ProductsManager {
                 "featured": true,
                 "sizes": ["S", "M", "L", "XL"],
                 "hasSize": true
+            },
+            {
+                "id": 10,
+                "name": "Timeless T-Shirt",
+                "price": 450,
+                "category": "t-shirt",
+                "description": "Timeless design t-shirt with premium quality",
+                "imageFront": "products/Time less-Tshirt.jpg",
+                "imageBack": "products/Time less-Tshirt Back.jpg",
+                "image": "products/Time less-Tshirt.jpg",
+                "stock": 25,
+                "featured": true,
+                "sizes": ["S", "M", "L", "XL"],
+                "hasSize": true
+            },
+            {
+                "id": 11,
+                "name": "Old Money T-Shirt",
+                "price": 450,
+                "category": "t-shirt",
+                "description": "Old Money aesthetic t-shirt with premium quality",
+                "imageFront": "products/old money-tshirt.jpg",
+                "imageBack": "products/old money-tshirt back.jpg",
+                "image": "products/old money-tshirt.jpg",
+                "stock": 25,
+                "featured": true,
+                "sizes": ["S", "M", "L", "XL"],
+                "hasSize": true
+            },
+            {
+                "id": 12,
+                "name": "Old Money T-Shirt Pink",
+                "price": 450,
+                "category": "t-shirt",
+                "description": "Old Money aesthetic t-shirt in pink with premium quality",
+                "imageFront": "products/old money-tshirt pink.jpg",
+                "imageBack": "products/old money-tshirt pink back.jpg",
+                "image": "products/old money-tshirt pink.jpg",
+                "stock": 25,
+                "featured": true,
+                "sizes": ["S", "M", "L", "XL"],
+                "hasSize": true
             }
         ];
     }

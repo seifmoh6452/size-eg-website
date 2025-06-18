@@ -152,6 +152,48 @@ document.addEventListener('DOMContentLoaded', () => {
             "featured": true,
             "sizes": ["S", "M", "L", "XL"],
             "hasSize": true
+        },
+        {
+            "id": 10,
+            "name": "Timeless T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Timeless design t-shirt with premium quality",
+            "imageFront": "products/Time less-Tshirt.jpg",
+            "imageBack": "products/Time less-Tshirt Back.jpg",
+            "image": "products/Time less-Tshirt.jpg",
+            "stock": 25,
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
+        },
+        {
+            "id": 11,
+            "name": "Old Money T-Shirt",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Old Money aesthetic t-shirt with premium quality",
+            "imageFront": "products/old money-tshirt.jpg",
+            "imageBack": "products/old money-tshirt back.jpg",
+            "image": "products/old money-tshirt.jpg",
+            "stock": 25,
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
+        },
+        {
+            "id": 12,
+            "name": "Old Money T-Shirt Pink",
+            "price": 450,
+            "category": "t-shirt",
+            "description": "Old Money aesthetic t-shirt in pink with premium quality",
+            "imageFront": "products/old money-tshirt pink.jpg",
+            "imageBack": "products/old money-tshirt pink back.jpg",
+            "image": "products/old money-tshirt pink.jpg",
+            "stock": 25,
+            "featured": true,
+            "sizes": ["S", "M", "L", "XL"],
+            "hasSize": true
         }
     ];
 
@@ -195,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 products.push({
                     "id": 8,
                     "name": "Classic Size Cap",
-                    "price": 200,
+                    "price": 450,
                     "category": "cap",
                     "description": "Classic Size.eg cap with premium design",
                     "imageFront": "products/Classic Size.jpg",
@@ -228,6 +270,69 @@ document.addEventListener('DOMContentLoaded', () => {
                     "hasSize": true
                 });
                 console.log('Liberty T-Shirt added, total products now:', products.length);
+            }
+
+            // Force add Timeless T-Shirt if not present
+            const hasTimelessProduct = products.some(p => p.name === 'Timeless T-Shirt');
+            if (!hasTimelessProduct) {
+                console.log('Timeless T-Shirt not found, adding it manually');
+                products.push({
+                    "id": 10,
+                    "name": "Timeless T-Shirt",
+                    "price": 450,
+                    "category": "t-shirt",
+                    "description": "Timeless design t-shirt with premium quality",
+                    "imageFront": "products/Time less-Tshirt.jpg",
+                    "imageBack": "products/Time less-Tshirt Back.jpg",
+                    "image": "products/Time less-Tshirt.jpg",
+                    "stock": 25,
+                    "featured": true,
+                    "sizes": ["S", "M", "L", "XL"],
+                    "hasSize": true
+                });
+                console.log('Timeless T-Shirt added, total products now:', products.length);
+            }
+
+            // Force add Old Money T-Shirt if not present
+            const hasOldMoneyProduct = products.some(p => p.name === 'Old Money T-Shirt');
+            if (!hasOldMoneyProduct) {
+                console.log('Old Money T-Shirt not found, adding it manually');
+                products.push({
+                    "id": 11,
+                    "name": "Old Money T-Shirt",
+                    "price": 450,
+                    "category": "t-shirt",
+                    "description": "Old Money aesthetic t-shirt with premium quality",
+                    "imageFront": "products/old money-tshirt.jpg",
+                    "imageBack": "products/old money-tshirt back.jpg",
+                    "image": "products/old money-tshirt.jpg",
+                    "stock": 25,
+                    "featured": true,
+                    "sizes": ["S", "M", "L", "XL"],
+                    "hasSize": true
+                });
+                console.log('Old Money T-Shirt added, total products now:', products.length);
+            }
+
+            // Force add Old Money Pink T-Shirt if not present
+            const hasOldMoneyPinkProduct = products.some(p => p.name === 'Old Money T-Shirt Pink');
+            if (!hasOldMoneyPinkProduct) {
+                console.log('Old Money T-Shirt Pink not found, adding it manually');
+                products.push({
+                    "id": 12,
+                    "name": "Old Money T-Shirt Pink",
+                    "price": 450,
+                    "category": "t-shirt",
+                    "description": "Old Money aesthetic t-shirt in pink with premium quality",
+                    "imageFront": "products/old money-tshirt pink.jpg",
+                    "imageBack": "products/old money-tshirt pink back.jpg",
+                    "image": "products/old money-tshirt pink.jpg",
+                    "stock": 25,
+                    "featured": true,
+                    "sizes": ["S", "M", "L", "XL"],
+                    "hasSize": true
+                });
+                console.log('Old Money T-Shirt Pink added, total products now:', products.length);
             }
 
             if (products.length === 0) {
@@ -295,6 +400,69 @@ document.addEventListener('DOMContentLoaded', () => {
                         "hasSize": true
                     });
                     console.log('Liberty T-Shirt added to localStorage products, total now:', products.length);
+                }
+
+                // Force add Timeless T-Shirt if not present
+                const hasTimelessProduct = products.some(p => p.name === 'Timeless T-Shirt');
+                if (!hasTimelessProduct) {
+                    console.log('Timeless T-Shirt not found in localStorage, adding it manually');
+                    products.push({
+                        "id": 10,
+                        "name": "Timeless T-Shirt",
+                        "price": 450,
+                        "category": "t-shirt",
+                        "description": "Timeless design t-shirt with premium quality",
+                        "imageFront": "products/Time less-Tshirt.jpg",
+                        "imageBack": "products/Time less-Tshirt Back.jpg",
+                        "image": "products/Time less-Tshirt.jpg",
+                        "stock": 25,
+                        "featured": true,
+                        "sizes": ["S", "M", "L", "XL"],
+                        "hasSize": true
+                    });
+                    console.log('Timeless T-Shirt added to localStorage products, total now:', products.length);
+                }
+
+                // Force add Old Money T-Shirt if not present
+                const hasOldMoneyProduct = products.some(p => p.name === 'Old Money T-Shirt');
+                if (!hasOldMoneyProduct) {
+                    console.log('Old Money T-Shirt not found in localStorage, adding it manually');
+                    products.push({
+                        "id": 11,
+                        "name": "Old Money T-Shirt",
+                        "price": 450,
+                        "category": "t-shirt",
+                        "description": "Old Money aesthetic t-shirt with premium quality",
+                        "imageFront": "products/old money-tshirt.jpg",
+                        "imageBack": "products/old money-tshirt back.jpg",
+                        "image": "products/old money-tshirt.jpg",
+                        "stock": 25,
+                        "featured": true,
+                        "sizes": ["S", "M", "L", "XL"],
+                        "hasSize": true
+                    });
+                    console.log('Old Money T-Shirt added to localStorage products, total now:', products.length);
+                }
+
+                // Force add Old Money Pink T-Shirt if not present
+                const hasOldMoneyPinkProduct = products.some(p => p.name === 'Old Money T-Shirt Pink');
+                if (!hasOldMoneyPinkProduct) {
+                    console.log('Old Money T-Shirt Pink not found in localStorage, adding it manually');
+                    products.push({
+                        "id": 12,
+                        "name": "Old Money T-Shirt Pink",
+                        "price": 450,
+                        "category": "t-shirt",
+                        "description": "Old Money aesthetic t-shirt in pink with premium quality",
+                        "imageFront": "products/old money-tshirt pink.jpg",
+                        "imageBack": "products/old money-tshirt pink back.jpg",
+                        "image": "products/old money-tshirt pink.jpg",
+                        "stock": 25,
+                        "featured": true,
+                        "sizes": ["S", "M", "L", "XL"],
+                        "hasSize": true
+                    });
+                    console.log('Old Money T-Shirt Pink added to localStorage products, total now:', products.length);
                 }
                 return;
             }
